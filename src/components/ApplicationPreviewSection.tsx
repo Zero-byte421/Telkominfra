@@ -14,7 +14,6 @@ function AppSection({
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredFeature, setHoveredFeature] = useState(null);
-  const [activeScreen, setActiveScreen] = useState(0);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -37,15 +36,6 @@ function AppSection({
       }
     };
   }, []);
-
-  useEffect(() => {
-    if (appScreens && appScreens.length > 0) {
-      const interval = setInterval(() => {
-        setActiveScreen((prev) => (prev + 1) % appScreens.length);
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [appScreens]);
 
   const bgColor = lightMode 
     ? 'bg-white'
@@ -290,112 +280,265 @@ function AppSection({
         </div>
       </div>
 
-      {/* Application Preview Section - Modern Carousel */}
-      <div className={`${lightMode ? 'bg-white' : 'bg-gray-50'} py-20 relative`}>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-          <div className="text-center mb-16">
-            <div className="inline-block mb-4">
-              <span className="text-sm font-bold tracking-wider uppercase px-4 py-2 rounded-full" style={{ 
-                backgroundColor: `${accentColor}20`,
-                color: accentColor
-              }}>
-                Preview
-              </span>
-            </div>
-            <h3 className="text-5xl font-bold text-gray-900 mb-4">Application Preview</h3>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {appScreens && appScreens.map((screen, index) => {
-              const isActive = activeScreen === index;
-              return (
-                <div
-                  key={index}
-                  className="group relative"
-                  style={{
-                    transitionDelay: `${index * 0.1}s`,
-                    opacity: isVisible ? 1 : 0,
-                    transform: isVisible ? 'scale(1)' : 'scale(0.95)',
-                    transition: 'all 0.5s ease-out'
-                  }}
-                >
-                  {/* Glow Effect for Active Screen */}
-                  {isActive && (
-                    <div className="absolute -inset-4 rounded-[3rem] opacity-40 blur-2xl animate-pulse" style={{ 
-                      backgroundColor: accentColor,
-                      animationDuration: '2s'
-                    }} />
-                  )}
-                  
+      {/* Application Preview Section - Conditional Layout */}
+      {(appName === 'MyTelkominfra' || appName === 'Presensi') ? (
+        // Phone Mockup Grid Layout for MyTelkominfra & Presensi
+        <div className={`${lightMode ? 'bg-gray-50' : 'bg-gray-900'} py-20 md:py-32 relative overflow-hidden`}>
+          <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+            {/* Title */}
+            <h2 className={`text-4xl md:text-5xl font-bold ${lightMode ? 'text-gray-900' : 'text-white'} mb-16 text-center`} style={{ fontFamily: 'Inter, sans-serif' }}>
+              Application Preview
+            </h2>
+
+            {/* Grid Layout - 4 Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {appScreens && appScreens.map((screen, index) => (
+                <div key={index} className="flex flex-col">
+                  {/* Text Content Above */}
+                  <div className={`mb-6 ${lightMode ? 'text-gray-900' : 'text-white'}`}>
+                    <h3 className="text-lg font-bold mb-3" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {screen.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed opacity-80" style={{ fontFamily: 'Inter, sans-serif' }}>
+                      {screen.description}
+                    </p>
+                  </div>
+
                   {/* Phone Mockup */}
-                  <div className={`relative bg-gray-900 rounded-[2.5rem] p-2 shadow-2xl transform transition-all duration-700 ${isActive ? 'scale-105 -rotate-2' : 'group-hover:scale-105'}`}>
-                    <div className="bg-white rounded-[2rem] overflow-hidden aspect-[9/19.5] relative">
-                      {/* Screen Content */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white p-4 flex flex-col">
-                        {/* Header */}
-                        <div className="flex items-center justify-between mb-4">
-                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-md`} style={{ backgroundColor: accentColor }}>
-                            {features[index % features.length] && React.createElement(features[index % features.length].icon, { className: 'text-white', size: 16 })}
-                          </div>
-                          <div className="flex gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-                          </div>
-                        </div>
+                  <div className="relative mx-auto" style={{ width: '200px' }}>
+                    {/* Phone Frame */}
+                    <div className="bg-black rounded-[2.5rem] p-2 shadow-2xl">
+                      {/* Notch */}
+                      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-b-2xl z-10" />
+                      
+                      {/* Screen */}
+                      <div className="bg-white rounded-[2rem] overflow-hidden relative" style={{ aspectRatio: '9/19.5' }}>
+                        {index === 0 || index === 2 ? (
+                          // Login Screen with Red Button
+                          <div className="h-full flex flex-col p-6 justify-between bg-white">
+                            {/* Logo */}
+                            <div className="text-center pt-8">
+                              <div className="text-2xl font-bold text-gray-900 mb-1"></div>
+                              <div className="text-xs text-gray-500">Welcome to My Telkominfra</div>
+                            </div>
 
-                        {/* Content */}
-                        <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
-                          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform transition-transform duration-500 ${isActive ? 'scale-110' : ''}`} style={{ backgroundColor: `${accentColor}20` }}>
-                            {features[index % features.length] && React.createElement(features[index % features.length].icon, { 
-                              className: 'text-current', 
-                              size: 28,
-                              style: { color: accentColor }
-                            })}
+                            {/* Login Button */}
+                            <div className="pb-12">
+                              <button 
+                                className="w-full py-3 rounded-lg font-bold text-sm text-white shadow-lg"
+                                style={{ backgroundColor: '#DC2626' }}
+                              >
+                                Masuk
+                              </button>
+                            </div>
                           </div>
-                          <h4 className="text-gray-900 font-bold text-sm mb-2">{screen.title}</h4>
-                          <p className="text-gray-600 text-xs leading-tight">{screen.description}</p>
-                        </div>
+                        ) : (
+                          // Dashboard Screen
+                          <div className="h-full flex flex-col bg-white">
+                            {/* Header */}
+                            <div className="px-4 pt-12 pb-4 bg-gradient-to-br from-red-600 to-red-700">
+                              <div className="flex items-center justify-between mb-4">
+                                <div>
+                                  <div className="text-white text-xs opacity-80">Selamat datang</div>
+                                  <div className="text-white font-bold text-sm">User Name</div>
+                                </div>
+                                <div className="w-10 h-10 bg-white rounded-full" />
+                              </div>
+                            </div>
 
-                        {/* Bottom Bar */}
-                        <div className={`rounded-full h-7 mx-auto w-2/3 shadow-inner transition-all duration-300`} style={{ 
-                          backgroundColor: accentColor,
-                          transform: isActive ? 'scale(1.05)' : 'scale(1)'
-                        }} />
+                            {/* Content Area with Icons */}
+                            <div className="flex-1 px-4 py-6">
+                              <div className="grid grid-cols-3 gap-3">
+                                {/* Icon Grid */}
+                                {[1,2,3,4,5,6].map((item) => (
+                                  <div key={item} className="flex flex-col items-center">
+                                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mb-2">
+                                      <div className="w-6 h-6 bg-red-600 rounded" />
+                                    </div>
+                                    <div className="text-xs text-gray-700 text-center">Menu</div>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Info Box */}
+                              <div className="mt-6 bg-gray-900 rounded-xl p-4 text-white">
+                                <div className="text-xs mb-2 opacity-80">Berita Internal</div>
+                                <div className="text-sm font-bold mb-2">TELKOMINFRA FOKUS PACA AKUISISI...</div>
+                                <div className="text-xs opacity-70 leading-tight">
+                                  Organisasi sehat akan memberikan output...
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    
-                    {/* Notch */}
-                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-20 h-5 bg-gray-900 rounded-full shadow-lg" />
-                  </div>
-
-                  {/* Label */}
-                  <div className="text-center mt-6">
-                    <p className="text-gray-900 font-semibold text-base">{screen.title}</p>
-                    <div className={`h-1 w-12 mx-auto mt-2 rounded-full transition-all duration-300 ${isActive ? 'w-20' : ''}`} style={{ 
-                      backgroundColor: isActive ? accentColor : '#e5e7eb'
-                    }} />
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Pagination Dots */}
-          <div className="flex justify-center gap-2 mt-12">
-            {appScreens && appScreens.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveScreen(index)}
-                className={`transition-all duration-300 rounded-full ${activeScreen === index ? 'w-8 h-3' : 'w-3 h-3'}`}
-                style={{ 
-                  backgroundColor: activeScreen === index ? accentColor : '#d1d5db'
-                }}
-              />
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        // Zigzag Card Layout for e-BAST, Dashboard Dismantle, KEPO
+        <div className={`${bgColor} py-20 md:py-32 relative overflow-hidden`}>
+          {/* Network Node Pattern on Left */}
+          <div className="absolute top-0 left-0 w-1/3 h-full opacity-20">
+            <svg className="w-full h-full" viewBox="0 0 400 800" preserveAspectRatio="none">
+              <circle cx="50" cy="100" r="4" fill="white" opacity="0.6" />
+              <circle cx="120" cy="150" r="4" fill="white" opacity="0.6" />
+              <circle cx="80" cy="220" r="4" fill="white" opacity="0.6" />
+              <circle cx="150" cy="280" r="4" fill="white" opacity="0.6" />
+              <circle cx="100" cy="350" r="4" fill="white" opacity="0.6" />
+              <circle cx="170" cy="400" r="4" fill="white" opacity="0.6" />
+              <circle cx="130" cy="470" r="4" fill="white" opacity="0.6" />
+              <circle cx="200" cy="520" r="4" fill="white" opacity="0.6" />
+              
+              <line x1="50" y1="100" x2="120" y2="150" stroke="white" strokeWidth="1" opacity="0.4" />
+              <line x1="120" y1="150" x2="80" y2="220" stroke="white" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="220" x2="150" y2="280" stroke="white" strokeWidth="1" opacity="0.4" />
+              <line x1="150" y1="280" x2="100" y2="350" stroke="white" strokeWidth="1" opacity="0.4" />
+              <line x1="100" y1="350" x2="170" y2="400" stroke="white" strokeWidth="1" opacity="0.4" />
+              <line x1="170" y1="400" x2="130" y2="470" stroke="white" strokeWidth="1" opacity="0.4" />
+              <line x1="130" y1="470" x2="200" y2="520" stroke="white" strokeWidth="1" opacity="0.4" />
+            </svg>
+          </div>
+
+          {/* Geometric Pattern on Right */}
+          <div className="absolute top-0 right-0 w-1/3 h-full opacity-15">
+            <svg className="w-full h-full" viewBox="0 0 400 800" preserveAspectRatio="none">
+              {Array.from({ length: 8 }).map((_, row) => 
+                Array.from({ length: 3 }).map((_, col) => {
+                  const x = 100 + col * 120;
+                  const y = 100 + row * 100;
+                  return (
+                    <g key={`${row}-${col}`}>
+                      <path
+                        d={`M ${x} ${y} L ${x + 15} ${y - 10} L ${x + 25} ${y} L ${x + 15} ${y + 10} Z`}
+                        fill="white"
+                        opacity="0.3"
+                      />
+                      <path
+                        d={`M ${x} ${y} L ${x - 15} ${y - 10} L ${x - 25} ${y} L ${x - 15} ${y + 10} Z`}
+                        fill="white"
+                        opacity="0.3"
+                      />
+                      <path
+                        d={`M ${x} ${y} L ${x - 10} ${y - 15} L ${x} ${y - 25} L ${x + 10} ${y - 15} Z`}
+                        fill="white"
+                        opacity="0.3"
+                      />
+                      <path
+                        d={`M ${x} ${y} L ${x - 10} ${y + 15} L ${x} ${y + 25} L ${x + 10} ${y + 15} Z`}
+                        fill="white"
+                        opacity="0.3"
+                      />
+                    </g>
+                  );
+                })
+              )}
+            </svg>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20 relative z-10">
+            {/* Title */}
+            <h2 className={`text-4xl md:text-5xl font-bold ${textColor} mb-12 md:mb-16`} style={{ fontFamily: 'Inter, sans-serif' }}>
+              Application Preview
+            </h2>
+
+            {/* Zigzag Layout */}
+            <div className="space-y-8 md:space-y-12">
+              {appScreens && appScreens.map((screen, index) => {
+                const isEven = index % 2 === 1;
+                return (
+                  <div 
+                    key={index}
+                    className={`flex flex-col ${isEven ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-6 md:gap-8`}
+                  >
+                    <div className={`w-full md:w-1/2 ${textColor} ${isEven ? 'md:text-right' : ''}`}>
+                      <h3 className="text-2xl md:text-3xl font-bold mb-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        {screen.title}
+                      </h3>
+                      <p className="text-base md:text-lg leading-relaxed" style={{ fontFamily: 'Inter, sans-serif' }}>
+                        {screen.description}
+                      </p>
+                    </div>
+                    <div className="w-full md:w-1/2">
+                      <div className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105">
+                        {index === 0 ? (
+                          // Login Preview for first item
+                          <div className="h-full flex" style={{ height: '280px' }}>
+                            <div className="w-1/2 bg-gradient-to-br from-blue-500 to-blue-600 relative overflow-hidden">
+                              <div className="absolute inset-0 opacity-20">
+                                <div className="absolute inset-0" style={{
+                                  backgroundImage: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%)',
+                                  backgroundSize: '20px 100%'
+                                }} />
+                              </div>
+                            </div>
+                            
+                            <div className="w-1/2 bg-white p-4 flex flex-col justify-center">
+                              <div className="mb-4">
+                                <h4 className="text-lg font-bold text-gray-900 mb-0.5">KEPO</h4>
+                                <p className="text-xs text-gray-600" style={{ fontSize: '9px' }}>Knowledge Education Supply Organization</p>
+                              </div>
+                              
+                              <div className="space-y-2 mb-3">
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-0.5">Username</label>
+                                  <input
+                                    type="text"
+                                    placeholder="Masukan Email"
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  />
+                                </div>
+                                
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-0.5">Password</label>
+                                  <input
+                                    type="password"
+                                    placeholder="Masukan Password"
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center mb-3">
+                                <input
+                                  type="checkbox"
+                                  id={`remember-${index}`}
+                                  className="w-3 h-3 text-blue-600 border-gray-300 rounded"
+                                />
+                                <label htmlFor={`remember-${index}`} className="ml-1.5 text-xs text-gray-600">Remember me</label>
+                              </div>
+                              
+                              <button className="w-full bg-blue-600 text-white py-1.5 rounded font-medium text-xs hover:bg-blue-700 transition-colors mb-2">
+                                Login
+                              </button>
+                              
+                              <div className="flex justify-end">
+                                <select className="text-xs text-gray-600 border-none bg-transparent focus:outline-none" style={{ fontSize: '10px' }}>
+                                  <option>ID</option>
+                                  <option>EN</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          // Placeholder for other items
+                          <div className="bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center" style={{ height: '200px' }}>
+                            <div className="text-gray-400 text-sm">Preview</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes fadeInUp {
@@ -498,10 +641,10 @@ export default function ApplicationPreviewSection() {
           { icon: Bell, title: 'Alerts' },
         ]}
         appScreens={[
-          { title: 'Login SSO', description: 'Secure single sign-on access' },
-          { title: 'Dashboard', description: 'Overview of your activities' },
-          { title: 'Documents', description: 'Manage all your files' },
-          { title: 'Settings', description: 'Customize your experience' },
+          { title: 'Login SSO', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Dashboard', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Documents', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Settings', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
         ]}
       />
 
@@ -521,10 +664,10 @@ export default function ApplicationPreviewSection() {
           { icon: Settings, title: 'Config' },
         ]}
         appScreens={[
-          { title: 'Network Monitor', description: 'Real-time status monitoring' },
-          { title: 'Analytics', description: 'Performance insights' },
-          { title: 'Configuration', description: 'System settings' },
-          { title: 'Reports', description: 'Detailed analytics' },
+          { title: 'Login SSO', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Network Monitor', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Analytics', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Configuration', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
         ]}
         reverse={true}
       />
@@ -545,10 +688,10 @@ export default function ApplicationPreviewSection() {
           { icon: Clock, title: 'History' },
         ]}
         appScreens={[
-          { title: 'Document Hub', description: 'Central repository' },
-          { title: 'Search', description: 'Find documents fast' },
-          { title: 'Upload', description: 'Add new documents' },
-          { title: 'Profile', description: 'User management' },
+          { title: 'Login SSO', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Document Hub', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Search', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Upload', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
         ]}
       />
 
@@ -567,10 +710,10 @@ export default function ApplicationPreviewSection() {
           { icon: Calendar, title: 'Schedule' },
         ]}
         appScreens={[
-          { title: 'Login SSO', description: 'Secure access portal' },
-          { title: 'Dashboard', description: 'Your workspace' },
-          { title: 'Approvals', description: 'Pending requests' },
-          { title: 'Profile', description: 'Personal info' },
+          { title: 'Login SSO', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Dashboard', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Approvals', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Profile', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
         ]}
         lightMode={true}
         reverse={true}
@@ -591,10 +734,10 @@ export default function ApplicationPreviewSection() {
           { icon: User, title: 'Profile' },
         ]}
         appScreens={[
-          { title: 'Login SSO', description: 'Quick secure login' },
-          { title: 'Attendance', description: 'Check in/out' },
-          { title: 'History', description: 'View records' },
-          { title: 'Profile', description: 'User settings' },
+          { title: 'Login SSO', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Attendance', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'History', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
+          { title: 'Profile', description: 'Securely access your account with Single Sign-On (SSO). One login for all your services — fast, safe, and seamless.' },
         ]}
         lightMode={true}
       />
